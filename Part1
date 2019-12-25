@@ -1,0 +1,173 @@
+##This project will address the 2018 death of women in Turkey 
+#(title)
+##(Comment)
+import pandas as pd
+import numpy as np 
+import matplotlib.pyplot as plt 
+from sklearn.metrics import r2_score
+import statsmodels.api as sm 
+
+data=pd.read_csv(r'C:\Users\selahattin\Desktop\2018_women.csv')
+print(data)
+
+x=data.iloc[:,2:3].values
+y=data.iloc[:,4:5].values
+
+print(data.corr())
+##I used linear regression to see the relationship between 2 data
+from sklearn.linear_model import LinearRegression 
+Lr = LinearRegression()
+Lr.fit(x,y)
+plt.scatter(x,y,color='Red')
+plt.plot(x, Lr.predict(y), color='purple')
+plt.show()
+
+##I look at the compatibility of the columns with the values of p and I look at the value of 'R'
+model = sm.OLS(Lr.predict(x), x)
+print(model.fit().summary())
+
+print("Linear R2 :")
+print(r2_score(y, Lr.predict((x))))
+# x_train
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
+# logistic
+
+##We trained x and y values
+from sklearn.linear_model import LogisticRegression
+
+Logr = LogisticRegression(random_state=0)
+Logr.fit(x_train, y_train)
+
+y_pred = Logr.predict(x_test)
+print(y_pred)
+print(y_test)
+#matrix
+##I checked the classification in logistic regression
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test,y_pred)
+print('logistic')
+print(cm)
+# Decision Tree Regression
+from sklearn.tree import DecisionTreeRegressor
+
+r_dt = DecisionTreeRegressor(random_state=0)
+r_dt.fit(x, y)
+
+plt.scatter(x, y, color='black')
+plt.plot(y, r_dt.predict(y), color='blue')
+plt.show()
+
+print('Decision tree R square')
+print(r2_score(y, r_dt.predict(x)))
+##I wanted the estimated value for death data by teaching death and armed data
+
+# Decision tree  
+##classification
+##I checked the relationship between death data and armed data
+
+
+from sklearn.tree import DecisionTreeClassifier
+
+dtc = DecisionTreeClassifier(criterion='entropy')
+
+dtc.fit(x_train, y_train)
+y_pred = dtc.predict(x_test)
+
+cm = confusion_matrix(y_test, y_pred)
+print('DTC')
+print(cm) 
+
+# StandardScaler
+
+from sklearn.preprocessing import StandardScaler
+
+sc = StandardScaler()
+X_train = sc.fit_transform(x_train)
+X_test = sc.fit_transform(x_test)
+Y_train = sc.fit_transform(y_train)
+Y_test = sc.fit_transform(y_test)
+##we built the model x_train,y_train
+Lr = LinearRegression()
+Lr.fit(x_train, y_train)
+pred = Lr.predict(x_test)
+
+
+plt.scatter(x_train, y_train, color='red')
+plt.plot(x_test, Lr.predict(x_test), color='black')
+plt.show()
+##I gave the test value, I wanted an estimate value corresponding to the test value
+# SVM
+from sklearn.svm import SVC
+classifier = SVC(kernel = 'rbf', random_state = 0)
+classifier.fit(X_train, y_train)
+
+y_pred = classifier.predict(X_test)
+
+##  Confusion Matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+
+
+#K-flod cross volidation
+from sklearn.model_selection import cross_val_score
+
+svmcross = cross_val_score(estimator = classifier, X=X_train, y=y_train , cv = 2)
+print('SVM/K-FLOD')
+print(svmcross.mean())
+print(svmcross.std())
+
+# knn
+
+from sklearn.neighbors import KNeighborsClassifier
+
+knn = KNeighborsClassifier(n_neighbors=1, metric='minkowski')
+knn.fit(X_train, y_train)
+
+pred = knn.predict(X_test)
+
+cm = confusion_matrix(y_test, pred)
+print(cm)
+knncross = cross_val_score(estimator = knn, X=X_train, y=y_train , cv = 2)
+print('KNN/K-FLOD')
+print(knncross .mean())
+print(knncross .std())
+
+# POLY
+from sklearn.preprocessing import PolynomialFeatures
+
+poly_reg = PolynomialFeatures(degree=2)
+x_poly = poly_reg.fit_transform(x)
+print(x_poly)
+
+lin_reg2 = LinearRegression()
+lin_reg2.fit(x_poly, y)
+##I showed neighboring values
+plt.scatter(x, y, color='red')
+plt.plot(x, lin_reg2.predict(poly_reg.fit_transform(x)), color='Green')
+
+plt.show()
+
+#SVR SUPPORT VECTOR 
+from sklearn.preprocessing import StandardScaler
+
+sc1 = StandardScaler()
+x_olcekli = sc1.fit_transform(x)
+sc2 = StandardScaler()
+y_olcekli = sc2.fit_transform(y)
+
+from sklearn.svm import SVR
+
+svr_reg = SVR(kernel='rbf')
+svr_reg.fit(x_olcekli, y_olcekli)
+
+plt.scatter(x_olcekli, y_olcekli, color='red')
+plt.plot(x_olcekli, svr_reg.predict(x_olcekli), color='blue')
+
+plt.show()
+print('svr R square')
+print(r2_score(y, svr_reg.predict(x)))
+ 
