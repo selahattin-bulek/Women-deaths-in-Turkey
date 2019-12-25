@@ -1,0 +1,86 @@
+#Random forest
+
+
+from sklearn.ensemble import RandomForestRegressor
+
+rf_reg = RandomForestRegressor(n_estimators=10, random_state=0)
+rf_reg.fit(x, y)
+
+plt.scatter(x, y, color='red')
+plt.plot(x, rf_reg.predict(x), color='yellow')
+
+# random forest classification
+from sklearn.ensemble import RandomForestClassifier
+
+rfc = RandomForestClassifier(n_estimators=10, criterion='entropy')
+rfc.fit(x_train, y_train)
+
+y_pred = rfc.predict(x_test)
+cm = confusion_matrix(y_test, y_pred)
+print('RFC')
+print(cm)
+from sklearn.metrics import r2_score
+
+print('random forest R square')
+print(r2_score(y, rf_reg.predict(x)))
+##Using random forest and random forest classification, I simultaneously checked the error margin in the data
+
+# naive bayes
+from sklearn.naive_bayes import GaussianNB
+
+gnb = GaussianNB()
+gnb.fit(x_train, y_train)
+
+y_pred = gnb.predict(x_test)
+
+cm = confusion_matrix(y_test, pred)
+print('GNB')
+print(cm)
+
+print(('naive bayes R square'))
+print(r2_score(y, gnb.predict(x)))
+##I checked conditional probability groups, I looked at R square
+
+
+#k-means
+from sklearn.cluster import KMeans
+
+kmeans = KMeans ( n_clusters = 3, init = 'k-means++')
+kmeans.fit(x)
+
+print(kmeans.cluster_centers_)
+results = []
+for i in range(1,11):
+    kmeans = KMeans (n_clusters = i, init='k-means++', random_state= 123)
+    kmeans.fit(x)
+    results.append(kmeans.inertia_)
+
+plt.plot(range(1,11),results)
+plt.show()
+
+kmeans = KMeans (n_clusters = 2, init='k-means++', random_state= 123)
+Y_guess= kmeans.fit_predict(x)
+print(Y_guess)  
+plt.scatter(x[Y_guess==0,0],x[Y_guess==0,1],s=100, c='red')
+plt.scatter(x[Y_guess==1,0],x[Y_guess==1,1],s=100, c='blue')
+plt.scatter(x[Y_guess==2,0],x[Y_guess==2,1],s=100, c='green')
+plt.scatter(x[Y_guess==3,0],x[Y_guess==3,1],s=100, c='yellow')
+
+plt.title('KMeans')
+plt.show()
+#Hierarchical clustering
+from sklearn.cluster import AgglomerativeClustering
+ac = AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')
+Y_tahmin = ac.fit_predict(x)
+print(Y_tahmin)
+
+plt.scatter(x[Y_guess==0,0],x[Y_guess==0,1],s=100, c='purple')
+plt.scatter(x[Y_guess==1,0],x[Y_guess==1,1],s=100, c='blue')
+plt.scatter(x[Y_guess==2,0],x[Y_guess==2,1],s=100, c='black')
+plt.scatter(x[Y_guess==3,0],x[Y_guess==3,1],s=100, c='yellow')
+plt.title('HC')
+plt.show()
+#k-flod
+import scipy.cluster.hierarchy as sch
+dendrogram = sch.dendrogram(sch.linkage(x, method='ward'))
+plt.show()
